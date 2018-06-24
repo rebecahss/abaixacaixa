@@ -77,7 +77,7 @@ print('- rm file -> Remove o arquivo ou diretório de nome "dirname"')
 print('- makedir dirname -> Cria um novo diretório"de nome dirname"')
 print('- upload path_to_file -> Faz upload de um arquivo em path_to_file para o servidor')
 print('- download file -> faz o download do arquivo "file" para a sua maquina')
-
+print()
 
 
 
@@ -102,18 +102,17 @@ while True:
 		print('- makedir dirname -> Cria um novo diretório"de nome dirname"')
 		print('- upload path_to_file -> Faz upload de um arquivo em path_to_file para o servidor')
 		print('- download file -> faz o download do arquivo "file" para a sua maquina')
-
-		cliente.send(msg1)
-
-		resposta = cliente.recv(1024)
-		print(resposta.decode('utf-8'))
+		print()
+		
 
 	elif msg1 == b'upload':
 
 		cliente.send(msg1)
-		reposta = protocolo(obj)
+		resposta = cliente.recv(1024)
 
 		flname = input('Digite o nome do arquivo: ')
+		cliente.send(bytes(flname,'utf-8'))
+		
 		fyle = open(flname, 'rb')
 		arquivo = fyle.read(6053)
 		cliente.send(arquivo)
@@ -123,31 +122,20 @@ while True:
 
 		cliente.send(msg1)
 		resposta = cliente.recv(1024)
-		print(resposta.decode('utf-8'))
 
-		flname = input("Escreva o nome do arquivo:")
+		flname = input("Escreva o nome do arquivo: ")
+		cliente.send(bytes(flname,'utf-8'))
+
 		fyle =open(flname,'wb')
 		fyle.write(cliente.recv(6053))
 		fyle.close()
 		print('Arquivo recebido')
-
-	elif msg1 == b'checkdir':
-
-	elif msg1 == b'cd':
-
-	elif msg1 == b'mv':
-
-	elif msg1 == b'rm':
-
-	elif msg1 == b'makedir':
-
-
-
-
-
+		
 
 	elif msg1 == b'sair':
 		cliente.send(msg1)
 		break
+	else:
+		print("Comando Inválido")
 
 cliente.close()
