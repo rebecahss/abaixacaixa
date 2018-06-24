@@ -5,7 +5,7 @@ import os
 from _thread import *
 
 IP = ""
-Port = 5013
+Port = int(sys.argv[1])
 
 
 
@@ -33,6 +33,8 @@ def protocolo(obj,mensagem):
 
 
 def clientthread(obj):
+
+	dir_atual = []
 
 	
 
@@ -95,30 +97,37 @@ def clientthread(obj):
 			protocolo(obj, 'Fazendo Upload')
 			
 			flname = obj.recv(6053)
-			protocolo(obj, 'OK')
+			flname = flname.decode('utf-8')
+			
 			fyle =open(flname,'wb')
 			fyle.write(obj.recv(6053))
 			fyle.close()
 			print('Arquivo recebido')
 
-		elif msg1 == 'download':
-			obj.send(b'Voce esta recebendo arquivo.')
 
-			flname = 'serv_to_cliente.txt'
+		elif msg1 == 'download':
+			protocolo(obj, 'Fazendo download')
+
+			flname = obj.recv(1024)
+			flname = flname.decode('utf-8')
+
 			fyle = open(flname, 'rb')
 			arquivo = fyle.read(6053)
-			obj.send(arquivo)s
+			obj.send(arquivo)
 			print('Aquivo enviado!')
 
-		elif msg1 == 'checkdir':
+		elif msg1 == 'menu':
+			print(menu)
 
-		elif msg1 == 'cd':
+		#elif msg1 == 'checkdir':
 
-		elif msg1 == 'mv':
+		#elif msg1 == 'cd':
 
-		elif msg1 == 'rm':
+		#elif msg1 == 'mv':
 
-		elif msg1 == 'makedir':
+		#elif msg1 == 'rm':
+
+		#elif msg1 == 'makedir':
 	
 
 
