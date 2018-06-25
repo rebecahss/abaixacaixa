@@ -30,6 +30,21 @@ def protocolo(obj,mensagem):
 	mensagem = bytes(mensagem,'utf-8')
 	obj.send(mensagem)
 
+def find_user(user,senha):
+	usuario = user+' '+senha+'\n'
+	arq = open('users.txt','r')
+	datafile=arq.readlines()
+	print(usuario)
+
+	for line in datafile:
+		if usuario in line:
+			ret = 1
+		else:
+			ret = 0
+	arq.close()
+	return ret
+
+
 
 
 def clientthread(obj):
@@ -52,11 +67,14 @@ def clientthread(obj):
 				user = obj.recv(1024)
 				user = user.decode('utf-8')
 				obj.send(b'OK')
-				print(user)
 
 				senha = obj.recv(1024)
 				senha = senha.decode('utf-8')
 				obj.send(b'OK')
+				flname = 'users.txt'
+				fyle =open(flname,'a+')
+				fyle.write(user+' '+senha+'\n')
+				fyle.close()
 				print(senha)
 				os.makedirs(user)
 				print('Diretorio criado')
@@ -67,14 +85,20 @@ def clientthread(obj):
 			elif msg1 == 'Entrar':
 				user = obj.recv(1024)
 				user = user.decode('utf-8')
-				#ve se tem no aquivo de cadastro se não tive pede pra entrar ou tentar de novo
+				
 				obj.send(b'OK')
 
 				senha = obj.recv(1024)
 				senha = senha.decode('utf-8')
-				#ve se a senha bate com o cadastro
-				obj.send(b'OK')
-				print(user, senha)
+				
+				ret=find_user(user,senha)
+				print(ret)
+				if ret == 1:
+					obj.send(b'OK')
+				else:
+					obj.send(b'nao')
+
+				
 				aux = 1
 				msg = obj.recv(1024)
 				msg1 = msg.decode('utf-8')
@@ -115,6 +139,7 @@ def clientthread(obj):
 			arquivo = fyle.read(6053)
 			obj.send(arquivo)
 			print('Aquivo enviado!')
+
 
 		elif msg1 == 'menu':
 			print(menu)

@@ -28,14 +28,16 @@ path_atual = []
 
 print('Bem-Vindo ao AbaixaCaixa!')
 print()
-login = input('Se ainda não possui cadastro digite "Criar", Se já é cadastrado digite "Entrar" : ')
+
 
 
 
 a=0
 
 while a == 0:
+	login = input('Se ainda não possui cadastro digite "Criar", Se já é cadastrado digite "Entrar" : ')
 	cliente.send(bytes(login,'utf-8'))
+
 	if login == 'Entrar':
 		user =input('Digite o nome usuário: ')
 		user = bytes(user,'utf-8')
@@ -48,7 +50,11 @@ while a == 0:
 		cliente.send(senha)
 		resposta = cliente.recv(1024)
 		print(resposta)
-		a=1
+		if resposta == b'OK':
+			a=1
+		else:
+			print('SENHA OU USUÁRIO INVÁLIDO')
+			a=0
 
 	elif login == 'Criar':
 		user = input('Escolha um nome de usuário: ')
@@ -63,10 +69,12 @@ while a == 0:
 		resposta = cliente.recv(1024)
 		print(resposta)
 		a=1
+	else:
+		print("Comando Inválido. te")
 
 #MENU DE COMANDOS
 
-print('Seja bem vindo(a)',user,'!')
+print('Seja bem vindo(a)',user.decode('utf-8'),'!')
 print()
 print("Lista de Comandos")
 print()
@@ -112,7 +120,7 @@ while True:
 
 		flname = input('Digite o nome do arquivo: ')
 		cliente.send(bytes(flname,'utf-8'))
-		
+
 		fyle = open(flname, 'rb')
 		arquivo = fyle.read(6053)
 		cliente.send(arquivo)
