@@ -71,7 +71,7 @@ while a == 0:
 		a=1
 	else:
 		print("Comando Inválido. te")
-
+path_atual = '/home/'+user.decode('utf-8')+'/'
 #MENU DE COMANDOS
 
 print('Seja bem vindo(a)',user.decode('utf-8'),'!')
@@ -79,12 +79,11 @@ print()
 print("Lista de Comandos")
 print()
 print('- checkdir -> Apresenta pastas e arquivos no diretorio corrente')
-print('- cd path_to_dir -> Permite acesso ao diretório "path_to_dir"')
-print('- mv org_file dest_dir -> Move "org_file" para o diretório "dest_dir"')
-print('- rm file -> Remove o arquivo ou diretório de nome "dirname"')
-print('- makedir dirname -> Cria um novo diretório"de nome dirname"')
-print('- upload path_to_file -> Faz upload de um arquivo em path_to_file para o servidor')
-print('- download file -> faz o download do arquivo "file" para a sua maquina')
+print('- mv -> Move um arquivo para um diretório destino')
+print('- rm -> Remove o arquivo ou um diretório"')
+print('- makedir -> Cria um novo diretório')
+print('- upload -> Faz upload de um arquivo para o servidor')
+print('- download -> faz o download de um arquivo para a sua maquina')
 print()
 
 
@@ -104,24 +103,25 @@ while True:
 		print("Lista de Comandos")
 		print()
 		print('- checkdir -> Apresenta pastas e arquivos no diretorio corrente')
-		print('- cd path_to_dir -> Permite acesso ao diretório "path_to_dir"')
-		print('- mv org_file dest_dir -> Move "org_file" para o diretório "dest_dir"')
-		print('- rm file -> Remove o arquivo ou diretório de nome "dirname"')
-		print('- makedir dirname -> Cria um novo diretório"de nome dirname"')
-		print('- upload path_to_file -> Faz upload de um arquivo em path_to_file para o servidor')
-		print('- download file -> faz o download do arquivo "file" para a sua maquina')
+		print('- mv -> Move um arquivo para um diretório destino')
+		print('- rm -> Remove o arquivo ou um diretório"')
+		print('- makedir -> Cria um novo diretório')
+		print('- upload -> Faz upload de um arquivo para o servidor')
+		print('- download -> faz o download de um arquivo para a sua maquina')
 		print()
-		
+				
 
 	elif msg1 == b'upload':
 
 		cliente.send(msg1)
 		resposta = cliente.recv(1024)
 
-		flname = input('Digite o nome do arquivo: ')
-		cliente.send(bytes(flname,'utf-8'))
+		flname = input('Digite o nome do path: ')
+		nome_arq = input('Escreva o nome do arquivo: ')
+		enviar=flname+'/'+nome_arq
+		cliente.send(bytes(enviar,'utf-8'))
 
-		fyle = open(flname, 'rb')
+		fyle = open(nome_arq, 'rb')
 		arquivo = fyle.read(6053)
 		cliente.send(arquivo)
 		print('Aquivo enviado!')
@@ -131,13 +131,48 @@ while True:
 		cliente.send(msg1)
 		resposta = cliente.recv(1024)
 
-		flname = input("Escreva o nome do arquivo: ")
-		cliente.send(bytes(flname,'utf-8'))
+		flname = input("Escreva o nome do path: ")
+		nome_arq = input('Escreva o nome do arquivo: ')
+		enviar =flname+'/'+nome_arq
+		cliente.send(bytes(enviar,'utf-8'))
 
-		fyle =open(flname,'wb')
+		fyle =open(nome_arq,'wb')
 		fyle.write(cliente.recv(6053))
 		fyle.close()
 		print('Arquivo recebido')
+
+	elif msg1 == b'checkdir':
+		cliente.send(msg1)
+		resposta = cliente.recv(1024)
+		path_novo=input('Escreva o path diretorio: ')
+		cliente.send(bytes(path_novo,'utf-8'))
+		tamanho=cliente.recv(1024)
+		tamanho = tamanho.decode('utf-8')
+		tamanho = int(tamanho)
+		for i in range(tamanho):
+			resposta = cliente.recv(1024)
+			print(resposta.decode('utf-8'))
+
+	elif msg1 == b'makedir':
+		cliente.send(msg1)
+		resposta = cliente.recv(1024)
+		path_novo=input('Escreva o path do novo diretorio')
+		cliente.send(bytes(path_novo,'utf-8'))
+
+	elif msg1 == b'rm':
+
+		cliente.send(msg1)
+		resposta = cliente.recv(1024)
+		flname=input('Escreva o path onde o arquivo esta: ')
+		nome_arq = input('Escreva o nome do arquivo: ')
+		enviar =flname+'/'+nome_arq
+		cliente.send(bytes(enviar,'utf-8'))
+		resposta2= cliente.recv(1024)
+		print(resposta2.decode('utf-8'))
+
+
+
+
 		
 
 	elif msg1 == b'sair':
